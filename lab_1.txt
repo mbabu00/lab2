@@ -1,0 +1,46 @@
+pipeline {
+agent none
+
+environment {
+	
+	LAB_GIT_CREDENTIAL_ID="LAB_GIT_CREDENTIAL_ID"
+	LAB_GIT_REPOSITORY="https://github.com/mbabu00/lab2.git"
+	}
+
+stages {
+		stage('DEV'){
+			agent none
+			steps{
+				script {
+					timeout(time:15, unit:'MINUTES' ) {
+						waitUntil {
+							try {
+								node () {	
+									checkout([
+										$class: 'GitSCM',
+										branches: [
+										
+											[name: '*/master']
+										],
+										extensions: [
+											[$class: 'WipeWorkspace'],
+										],
+										userRemoteConfigs: [[credentialsId: env.LAB_GIT_CREDENTIAL_ID, url: env.LAB_GIT_REPOSITORY]]
+									])
+									timestamps{
+										task 'After checkout'
+											sh 'echo This is for testing'
+											sh 'cat README.md'
+									}
+								}
+								
+								return true
+								System.exit(0)
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}	
