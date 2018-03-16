@@ -37,6 +37,14 @@ stages {
 								return true
 								System.exit(0)
 							}
+						catch(error) {
+								try {
+									input "Stage Failed, Retry  Build ?, PROCEED to Retry , Abort to cancel the build"
+								}
+								catch (userClickedAbort) {
+									throw userClickedAbort
+								}
+								return false
 						}
 					}
 				}
