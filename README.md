@@ -1,2 +1,1 @@
-# lab2
-lab2
+This is the my read me file.
