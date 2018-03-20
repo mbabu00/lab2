@@ -35,7 +35,7 @@ stages {
 										extensions: [
 											[$class: 'WipeWorkspace'],
 										],
-										userRemoteConfigs: [[credentialsId: env.LAB_GIT_CREDENTIAL_ID, url: env.LAB_GIT_REPOSITORY]]
+										userRemoteConfigs: [[credentialsId: env.TESLA_GIT_CREDENTIAL_ID, url: env.TESLA_GIT_REPOSITORY]]
 									])
 									timestamps{
 										task 'After checkout'
