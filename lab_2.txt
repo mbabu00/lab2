@@ -49,7 +49,7 @@ stages {
 											sh '$M2/mvn -Dmaven.test.failure.ignore=true package'
 											sh 'cp target/*.jar .'
 											sh 'cp `ls target/*.jar | head -1` $APP_NAME.jar '
-											sh 'zip Test_$APP_NAME_ignore.zip $APP_NAME.jar'
+											sh 'zip Test_${APP_NAME}_ignore.zip $APP_NAME.jar'
 									}
 								    timestamps{
 										task 'Upload To Nexus'
