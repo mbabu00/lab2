@@ -55,7 +55,7 @@ stages {
 										task 'Upload To Nexus'
 										    // echo $HOSTNAME
 										    
-											sh 'curl -u $NEXUS_USERID:$NEXUS_PASSWORD -T Test_$APP_NAME_ignore.zip "$NEXUS_BASE/$NEXUS_REPO_NAME/$APP_NAME/Test_$APP_NAME_ignore.zip"'
+											sh 'curl -u $NEXUS_USERID:$NEXUS_PASSWORD -T Test_${APP_NAME}_ignore.zip "$NEXUS_BASE/$NEXUS_REPO_NAME/$APP_NAME/Test_${APP_NAME}_ignore.zip"'
 									}
 								
 								}
