@@ -1,0 +1,81 @@
+pipeline {
+agent none
+
+environment {
+	TESLA_GIT_CREDENTIAL_ID="TESLA_SVC-JENKINS-ADM"
+	TESLA_GIT_REPOSITORY="http://stashjira.guycarp.com/scm/mhtesla/insights.git"
+	LAB_GIT_CREDENTIAL_ID="LAB_GIT_CREDENTIAL_ID"
+	LAB_GIT_REPOSITORY="https://github.com/mbabu00/lab2.git"
+
+	NEXUS_USERID="admin"
+	NEXUS_PASSWORD="admin123"
+	NEXUS_BASE="http://usdf23v0385.mrshmc.com:8082/repository"
+	NEXUS_REPO_NAME="MARSH_DEV_RAW_REPO"
+	
+	JAVA_HOME="/apps/jenkins/jdk/jdk1.8.0_152"
+	M2="/apps/jenkins/maven/apache-maven-3.2.2/bin"
+	APP_NAME="lab_test1"
+	}
+
+stages {
+		stage('DEV'){
+			agent none
+			steps{
+				script {
+					timeout(time:15, unit:'MINUTES' ) {
+						waitUntil {
+							try {
+								node () {	
+									checkout([
+										$class: 'GitSCM',
+										branches: [
+										
+											[name: '*/master']
+										],
+										extensions: [
+											[$class: 'WipeWorkspace'],
+										],
+										userRemoteConfigs: [[credentialsId: env.LAB_GIT_CREDENTIAL_ID, url: env.LAB_GIT_REPOSITORY]]
+									])
+									timestamps{
+										task 'After checkout'
+											sh 'echo This is for testing'
+											sh 'cat README.md'
+									}
+								    									
+									timestamps{
+										task 'Build Artifact'
+											sh '$M2/mvn clean'
+											sh '$M2/mvn -Dmaven.test.failure.ignore=true package'
+											sh 'cp target/*.jar .'
+											sh 'cp `ls target/*.jar | head -1` $APP_NAME.jar '
+											sh 'zip Test_$APP_NAME_ignore.zip $APP_NAME.jar'
+									}
+								    timestamps{
+										task 'Upload To Nexus'
+										    // echo $HOSTNAME
+										    
+											sh 'curl -u $NEXUS_USERID:$NEXUS_PASSWORD -T Test_$APP_NAME_ignore.zip "$NEXUS_BASE/$NEXUS_REPO_NAME/$APP_NAME/Test_$APP_NAME_ignore.zip"'
+									}
+								
+								}
+								
+								return true
+								System.exit(0)
+							}
+						catch(error) {
+								try {
+									input "Stage Failed, Retry  Build ?, PROCEED to Retry , Abort to cancel the build"
+								}
+								catch (userClickedAbort) {
+									throw userClickedAbort
+								}
+								return false
+						}
+					}
+				}
+			}
+		}
+	}
+}
+}	
