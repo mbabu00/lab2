@@ -40,7 +40,7 @@ stages {
 									timestamps{
 										task 'After checkout'
 											sh 'echo This is for testing'
-											sh 'cat README.md'
+											sh 'cat Tesla_insights_JenkinsFile_V3'
 									}
 								    									
 									timestamps{
